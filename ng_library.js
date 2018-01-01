@@ -1,6 +1,6 @@
 
 var ngio;
-function ng_connect(app_id, encryption_key){
+var  ng_connect = function(app_id, encryption_key){
 	ngio = new Newgrounds.io.core(app_id, encryption_key);
 }
 
@@ -11,12 +11,12 @@ var medals;
 var medalDOM = document.createElement("div");
 
 /* handle loaded medals */
-function onMedalsLoaded(result) {
+var onMedalsLoaded = function(result) {
     if (result.success) medals = result.medals;
 }
 
 
-function ng_initialize(){
+var ng_initialize = function(){
 
 	/* load our medals  from the server */
 	_loadMedals();
@@ -166,7 +166,7 @@ var _showMedal = function(medal){
 
 var to_unlock = []
 
-function ng_unlockmedal(medal_name) {
+var ng_unlockmedal = function(medal_name) {
 
    
     for (var i = 0; i < medals.length; i++) {
@@ -201,6 +201,81 @@ function ng_unlockmedal(medal_name) {
             return sfxTimeout;      	
         }
 	}
+}
+
+var left = false;
+var canvas_sides = ["Left", "Right", "Top", "Bottom"];
+
+var initialize_hackzorMedalDetection = function(){
+
+	
+	var canvas = document.getElementById("canvas");
+
+	// //Mouse leave canvas event	
+	canvas.onmouseleave = function(e)
+	{	
+		if(!left)
+		{	
+			//Gets side the canvas was left from
+			var mouseX = e.clientX;
+			var mouseY = e.clientY; 
+
+			var width = canvas.scrollWidth;
+			var height = canvas.scrollHeight;
+
+			if(mouseX > width){
+				console.log("Right");
+			}
+			else if(mouseX < 0){
+				console.log("Left");
+			}
+			else if(mouseY > height){
+				console.log("Bottom"); //Y:0 starts in top left paradigm
+			}
+			else if(mouseY < 0){
+				console.log("Top");
+			}
+
+			left = true;
+		}
+
+	};
+
+
+	//Mouse enter canvas event
+	canvas.onmouseenter= function(e)
+	{
+		if(left){
+
+			//Gets side the screen was entered from
+			var mouseX = e.clientX;
+			var mouseY = e.clientY; 
+
+			var width = canvas.scrollWidth;
+			var height = canvas.scrollHeight;
+
+			//Need to somehow find the side of the screen the pos is closest to
+			var percent_right = mouseX/width;
+			var percent_left = 1 - horizontal_prcnt;
+			var percent_bottom = mouseY/height;
+			var percent_top =  1 - percent_bottom;
+
+			//TODO: 
+			//#1 make dictionary sides mapped to values
+			//get side, compare with onmouseleave
+			//also need to record this value first
+			//then we can continue
+			
+
+
+
+
+
+			left = false;
+
+		}
+	};
+
 }
 
 
