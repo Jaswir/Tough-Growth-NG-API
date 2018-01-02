@@ -203,7 +203,7 @@ var ng_unlockmedal = function(medal_name) {
 	}
 }
 
-var left = false;
+var left = "";
 var canvas_sides = ["Left", "Right", "Top", "Bottom"];
 
 var initialize_hackzorMedalDetection = function(){
@@ -224,19 +224,18 @@ var initialize_hackzorMedalDetection = function(){
 			var height = canvas.scrollHeight;
 
 			if(mouseX > width){
-				console.log("Right");
+				left = "Right";
 			}
 			else if(mouseX < 0){
-				console.log("Left");
+				left = "Left"; 
 			}
 			else if(mouseY > height){
-				console.log("Bottom"); //Y:0 starts in top left paradigm
+				left = "Bottom"; 
+			
 			}
 			else if(mouseY < 0){
-				console.log("Top");
+				left = "Top"; 
 			}
-
-			left = true;
 		}
 
 	};
@@ -245,7 +244,7 @@ var initialize_hackzorMedalDetection = function(){
 	//Mouse enter canvas event
 	canvas.onmouseenter= function(e)
 	{
-		if(left){
+		if(left != ""){
 
 			//Gets side the screen was entered from
 			var mouseX = e.clientX;
@@ -254,24 +253,23 @@ var initialize_hackzorMedalDetection = function(){
 			var width = canvas.scrollWidth;
 			var height = canvas.scrollHeight;
 
-			//Need to somehow find the side of the screen the pos is closest to
-			var percent_right = mouseX/width;
-			var percent_left = 1 - horizontal_prcnt;
-			var percent_bottom = mouseY/height;
-			var percent_top =  1 - percent_bottom;
+			//Finds the side of the screen the pos is closest to
+			canvas_sides["Right"] =  mouseX/width;
+			canvas_sides["Left"]  =  1 - canvas_sides["Right"];
+			canvas_sides["Bottom"] =  mouseY/height;
+			canvas_sides["Top"]  =  1 - canvas_sides["Bottom"];
+			var closest = Object.keys(canvas_sides).reduce(function(a, b){ return canvas_sides[a] > canvas_sides[b] ? a : b });
 
-			//TODO: 
-			//#1 make dictionary sides mapped to values
-			//get side, compare with onmouseleave
-			//also need to record this value first
-			//then we can continue
+			console.log("Entered: " , closest);
+
+			//Determines hackzor
+			hackzor = closest != left; 
+			if(hackzor){
+					//Get gamemaker room state
+			}
 			
 
-
-
-
-
-			left = false;
+			left = "";
 
 		}
 	};
