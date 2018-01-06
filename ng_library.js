@@ -46,6 +46,7 @@ var _createMedalUI = function(){
 	        "top: 51px; "+
 	        "left: -310px; "+
 	        "overflow:hidden; "+
+	        "pointer-events: none;"+ 
 	        "-webkit-transition:left 0.5s ease;"+
 	        " -moz-transition:left 0.5s ease;"+
 	        " -ms-transition:left 0.5s ease; "+
@@ -179,10 +180,9 @@ var ng_unlockmedal = function(medal_name) {
     		// Unlock and display if it's not unlocked yet
     		if(!medal.unlocked){
     			to_unlock.push(medal);
-        		console.log("LengthCXY: ", to_unlock.length);
 				setTimeout(function(){ 
-					_showMedal(medal);
 					_loadMedals();
+					_showMedal(medal);				
 					to_unlock.pop(); 
 							/* unlock the medal from the server */
 			                ngio.callComponent('Medal.unlock', {id:medal.id}, function(result) {
@@ -260,15 +260,14 @@ var initialize_hackzorMedalDetection = function(){
 			canvas_sides["Top"]  =  1 - canvas_sides["Bottom"];
 			var closest = Object.keys(canvas_sides).reduce(function(a, b){ return canvas_sides[a] > canvas_sides[b] ? a : b });
 
-			console.log("Entered: " , closest);
-
 			//Determines hackzor
 			hackzor = closest != left; 
 			if(hackzor){
-					//Get gamemaker room state
+
+				gml_Script_gmcallback_hacked();
+
 			}
 			
-
 			left = "";
 
 		}
