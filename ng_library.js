@@ -15,7 +15,6 @@ var onMedalsLoaded = function(result) {
     if (result.success) medals = result.medals;
 }
 
-
 var ng_initialize = function(){
 
 	/* load our medals  from the server */
@@ -177,9 +176,19 @@ var ng_unlockmedal = function(medal_name) {
         /* look for a matching medal name */
         if (medal.name == medal_name) {
 
+
+        	var logged_in = ngio.session_id != null;
+
+        	//Gets medal unlocked state from NG if logged in, otherwise from gamemaker
+    		var medalUnlocked;
+        	if(logged_in) medalUnlocked = medal.unlocked;
+        	else medalUnlocked = gml_Script_gmcallback_medalunlock(null, null, medal_name); //argument0 starts at the third argument in JS
+        	
+        	
     		// Unlock and display if it's not unlocked yet
-    		if(!medal.unlocked){
+    		if(!medalUnlocked){
     			to_unlock.push(medal);
+    			console.log("Logged on: " , );
 				setTimeout(function(){ 
 					_loadMedals();
 					_showMedal(medal);				
@@ -197,7 +206,7 @@ var ng_unlockmedal = function(medal_name) {
   
             // I use this return value inside gamemaker to play the audio effect at the right time
             var sfxTimeout = 2500 * (to_unlock.length - 1);
-            if(medal.unlocked) sfxTimeout = -1;
+            if(medalUnlocked) sfxTimeout = -1;
             return sfxTimeout;      	
         }
 	}
@@ -206,6 +215,9 @@ var ng_unlockmedal = function(medal_name) {
 var left = "";
 var canvas_sides = ["Left", "Right", "Top", "Bottom"];
 
+//Communication between gamemaker and javascript to detect the hackzor medal.
+//If you needed to read this code to get the medal rate the game 5 stars
+//and comment Illuminati.
 var initialize_hackzorMedalDetection = function(){
 
 	
@@ -264,6 +276,7 @@ var initialize_hackzorMedalDetection = function(){
 			hackzor = closest != left; 
 			if(hackzor){
 
+				//Finally gamemaker decides whether to unlock the medal or not
 				gml_Script_gmcallback_hacked();
 
 			}
